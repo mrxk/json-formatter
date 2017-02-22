@@ -1,0 +1,228 @@
+<html>
+    <head>
+        <style type='text/css'>
+            #input {
+                width: 100%;
+                height: 20%;
+            }
+            #output {
+                width: 100%;
+                height: 65%;
+            }
+            #outputContainer table
+            {
+                border-collapse: collapse;
+                width: 100%;
+            }
+
+            #outputContainer td
+            {
+                vertical-align: top;
+                text-align: left;
+            }
+
+            #outputContainer td.label
+            {
+                width: 150px;
+            }
+
+            #outputContainer tr
+            {
+                border-bottom: 1px solid black;
+            }
+
+            #outputContainer tr:last-child
+            {
+                border-bottom: none;
+            }
+
+            #outputContainer td.detail_array_index
+            {
+                width:1px;
+            }
+        </style>
+        <script type='text/javascript'>
+        function sanitize(obj)
+        {
+            var keepLinks = document.getElementById("keepLinks").checked;
+            var keepAccept = document.getElementById("keepAccept").checked;
+            for (p in obj)
+            {
+                var name = p;
+                var value = obj[p];
+                if (name === 'links' && !keepLinks)
+                {
+                    obj[name] = ['...'];
+                }
+                else if (name === 'accept' && !keepAccept)
+                {
+                    obj[name] = '...';
+                }
+                else if (name === 'items')
+                {
+                    var items = obj[name];
+                    for( var i = 0; i < items.length; ++i )
+                    {
+                        items[i] = sanitize(items[i]);
+                    }
+                    obj[name] = items;
+                }
+                else if (value instanceof Object)
+                {
+                    obj[name] = sanitize(value)
+                }
+            }
+            return obj;
+        }
+        function parseAsHashMap(value)
+        {
+            var str = '';
+            var prefix = '';
+            var eat_white_space = false;
+            for (var c of value)
+            {
+                switch(c) {
+                    case '{':
+                    case '[':
+                        prefix += '    ';
+                        str += c + '\n' + prefix;
+                        eat_white_space = true;
+                        break;
+                    case '}':
+                    case ']':
+                        prefix = prefix.slice(0, -4);
+                        str += '\n' + prefix + c;
+                        eat_white_space = true;
+                        break;
+                    case ',':
+                        str += c + '\n' + prefix;
+                        eat_white_space = true;
+                        break;
+                    case ' ':
+                        if (!eat_white_space)
+                        {
+                            str += c;
+                        }
+                        break;
+                    default:
+                        str += c;
+                        eat_white_space = false;
+                        break;
+                }
+            }
+            return str;
+        }
+        function validate()
+        {
+            var outputContainer = document.getElementById('outputContainer');
+            outputContainer.innerHTML = '';
+            var value = document.getElementById('input').value;
+            if (value == null || value.length == 0)
+            {
+                return;
+            }
+            try
+            {
+                var obj = JSON.parse(value);
+                var asTable = document.getElementById('asTable').checked;
+                obj = sanitize(obj);
+                if (asTable)
+                {
+                    outputContainer.appendChild(object_to_table(obj));
+                }
+                else
+                {
+                    var textArea = document.createElement('textarea');
+                    textArea.value = JSON.stringify(obj, null, 4);
+                    textArea.id = 'output';
+                    textArea.setAttribute('autocomplete', 'off');
+                    textArea.setAttribute('autocapitalize', 'off');
+                    textArea.setAttribute('spellcheck', 'off');
+                    outputContainer.appendChild(textArea);
+                }
+            }
+            catch(e)
+            {
+                console.log(e);
+                var error = document.createElement('div');
+                if (value.startsWith('{'))
+                {
+                    error.innerText = parseAsHashMap(value, "");
+                }
+                else
+                {
+                    error.innerText = e.stack;
+                }
+                outputContainer.appendChild(error);
+            }
+        }
+        function object_to_table(obj)
+        {
+            if (obj instanceof Array)
+            {
+                var table = document.createElement('table');
+                for (var idx in obj)
+                {
+                    var td = document.createElement('td');
+                    td.appendChild(object_to_table(obj[idx]));
+
+                    var tr = document.createElement('tr');
+
+                    /*
+                     * Add a count eye catcher for arrays with more than one element
+                     */
+                    if (obj.length > 1)
+                    {
+                        var tdi = document.createElement('td');
+                        tdi.innerHTML = (parseInt(idx)+1) + '/' + obj.length + ':';
+                        tdi.className = 'detail_array_index';
+                        tr.appendChild(tdi);
+                    }
+
+                    tr.appendChild(td);
+                    table.appendChild(tr);
+                }
+                return table;
+            }
+            else if (obj instanceof Object)
+            {
+                var table = document.createElement('table');
+                for (var key in obj)
+                {
+                    var label = document.createElement('td');
+                    label.innerHTML = key + ':';
+                    label.className = 'label';
+
+                    var value = document.createElement('td');
+                    value.appendChild(object_to_table(obj[key]));
+
+                    var tr = document.createElement('tr');
+                    tr.appendChild(label);
+                    tr.appendChild(value);
+                    table.appendChild(tr);
+                }
+                return table;
+            }
+            else
+            {
+                var div = document.createElement('div');
+                div.appendChild(document.createTextNode(obj));
+                return div;
+            }
+        }
+        </script>
+    <head>
+    <body>
+        <div style="float:right">
+            <label><input type="checkbox" id="keepLinks" onclick='validate();'> Keep links</label></br>
+            <label><input type="checkbox" id="keepAccept" onclick='validate();'> Keep accept</label>
+        </div>
+        <h4>Input</h4>
+        <textarea autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" id='input' oninput='validate();'></textarea>
+        <h4>Output</h4>
+        <div style="float:right">
+            <label><input type="checkbox" id="asTable" onclick='validate();'> As table</label></br>
+        </div>
+        <div id="outputContainer"></div>
+    </body>
+</html>
