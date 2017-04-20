@@ -54,7 +54,13 @@
                 if (decodeConsul && name === 'Value') {
                     console.log(obj[name]);
                     console.log(atob(obj[name]));
-                    obj[name] = JSON.parse(atob(obj[name]));
+                    try
+                    {
+                        obj[name] = JSON.parse(atob(obj[name]));
+                    } catch (e) {
+                        console.log(e);
+                        obj[name] = atob(obj[name]);
+                    }
                 }
                 if (name === 'links' && !keepLinks)
                 {
