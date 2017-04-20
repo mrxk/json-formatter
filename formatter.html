@@ -52,13 +52,10 @@
                 var name = p;
                 var value = obj[p];
                 if (decodeConsul && name === 'Value') {
-                    console.log(obj[name]);
-                    console.log(atob(obj[name]));
                     try
                     {
                         obj[name] = JSON.parse(atob(obj[name]));
                     } catch (e) {
-                        console.log(e);
                         obj[name] = atob(obj[name]);
                     }
                 }
