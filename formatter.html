@@ -230,7 +230,14 @@
                 var jsonpath = document.getElementById('jsonpath').value;
                 if (jsonpath != null && jsonpath.length > 0)
                 {
-                    obj = jsonPath(obj, jsonpath);
+                    var opts = {resultType:"VALUE"};
+                    if (jsonpath.startsWith("PATH:"))
+                    {
+                        opts.resultType = "PATH";
+                        jsonpath = jsonpath.substring(5);
+                        console.log(jsonpath);
+                    }
+                    obj = jsonPath(obj, jsonpath, opts);
                 }
                 var asTable = document.getElementById('asTable').checked;
                 if (asTable)
@@ -334,8 +341,8 @@
         <div style="float:right">
             <label><input type="checkbox" id="keepLinks" onclick="validate();"> Keep links</label><br/>
             <label><input type="checkbox" id="keepAccept" onclick="validate();"> Keep accept</label><br/>
-            <label><input type="checkbox" id="decodeConsul" onclick="validate();"> Decode consul payload</label><br/>
-            <label><input type="checkbox" id="asTable" onclick="validate();"> As table</label>
+            <label><input type="checkbox" id="asTable" onclick="validate();"> As table</label><br/>
+            <label><input type="checkbox" id="decodeConsul" onclick="validate();"> Decode consul payload</label>
         </div>
         <div id="outputContainer"></div>
     </body>
