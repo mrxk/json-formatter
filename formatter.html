@@ -247,27 +247,31 @@
                 else
                 {
                     var textArea = document.createElement('textarea');
-                    textArea.value = JSON.stringify(obj, null, 4);
                     textArea.id = 'output';
                     textArea.setAttribute('autocomplete', 'off');
                     textArea.setAttribute('autocapitalize', 'off');
                     textArea.setAttribute('spellcheck', 'off');
+                    textArea.value = JSON.stringify(obj, null, 4);
                     outputContainer.appendChild(textArea);
                 }
             }
             catch(e)
             {
                 console.log(e);
-                var error = document.createElement('div');
+                var textArea = document.createElement('textarea');
+                textArea.id = 'output';
+                textArea.setAttribute('autocomplete', 'off');
+                textArea.setAttribute('autocapitalize', 'off');
+                textArea.setAttribute('spellcheck', 'off');
                 if (value.startsWith('{'))
                 {
-                    error.innerText = parseAsHashMap(value, "");
+                    textArea.value = e.stack + "\nBest guess follows:\n" + parseAsHashMap(value, "");
                 }
                 else
                 {
-                    error.innerText = e.stack;
+                    textArea.value = e.stack;
                 }
-                outputContainer.appendChild(error);
+                outputContainer.appendChild(textArea);
             }
         }
         function object_to_table(obj)
