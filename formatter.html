@@ -340,11 +340,11 @@
         </div>
         <h4>Input</h4>
         <textarea placeholder="Paste or type JSON text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" id="input" oninput="validate();"></textarea>
-        <input placeholder="Optional JSONPath expression" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" id="jsonpath" oninput="validate();"></input>
+        <input placeholder="Optional JSONPath expression (http://goessner.net/articles/JsonPath/)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" id="jsonpath" oninput="validate();"></input>
         <h4>Output</h4>
         <div style="float:right">
-            <label><input type="checkbox" id="keepLinks" onclick="validate();"> Keep links</label><br/>
-            <label><input type="checkbox" id="keepAccept" onclick="validate();"> Keep accept</label><br/>
+            <label><input type="checkbox" id="keepLinks" onclick="validate();"> Show links</label><br/>
+            <label><input type="checkbox" id="keepAccept" onclick="validate();"> Show accept</label><br/>
             <label><input type="checkbox" id="asTable" onclick="validate();"> As table</label><br/>
             <label><input type="checkbox" id="decodeConsul" onclick="validate();"> Decode consul payload</label>
         </div>
