@@ -250,7 +250,7 @@
                     textArea.id = 'output';
                     textArea.setAttribute('autocomplete', 'off');
                     textArea.setAttribute('autocapitalize', 'off');
-                    textArea.setAttribute('spellcheck', 'off');
+                    textArea.setAttribute('spellcheck', 'false');
                     textArea.value = JSON.stringify(obj, null, 4);
                     outputContainer.appendChild(textArea);
                 }
@@ -262,7 +262,7 @@
                 textArea.id = 'output';
                 textArea.setAttribute('autocomplete', 'off');
                 textArea.setAttribute('autocapitalize', 'off');
-                textArea.setAttribute('spellcheck', 'off');
+                textArea.setAttribute('spellcheck', 'false');
                 if (value.startsWith('{'))
                 {
                     textArea.value = e.stack + "\nBest guess follows:\n" + parseAsHashMap(value, "");
